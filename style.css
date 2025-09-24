@@ -58,11 +58,12 @@ body {
   cursor: pointer;
 }
 .game .container .the-word {
-  font-size: 40px;
+  font-size: 50px;
   color: var(--main-color);
   text-transform: capitalize;
   font-weight: bold;
   user-select: none;
+  margin: 20px 0;
 }
 .game .container .input {
   width: 100%;
@@ -95,6 +96,7 @@ body {
   border-radius: 10px;
   font-size: 18px;
   text-transform: capitalize;
+  user-select: none;
 }
 .game .container .stats {
   background-color: white;
@@ -112,14 +114,14 @@ body {
   color: var(--secondary-color);
   font-weight: bold;
 }
-.game .container .finish {
+.game .container .finish span {
   font-size: 50px;
   text-transform: capitalize;
   font-weight: 600;
 }
-.game .container .finish.win {
+.game .container .finish .win {
   color: var(--main-color);
 }
-.game .container .finish.fail {
+.game .container .finish .fail {
   color: red;
 }
