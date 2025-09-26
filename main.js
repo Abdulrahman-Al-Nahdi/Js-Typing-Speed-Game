@@ -31,6 +31,7 @@ const words = [
   "key",
   "door",
 ];
+
 // setting levels of the game
 const lvls = {
   Easy: 5,
@@ -38,9 +39,16 @@ const lvls = {
   Hard: 2,
 };
 
-// setting default Level and seconds
-let defaultLvlName = "Easy";
+// setting default Level and seconds and num of words
+let defaultLvlName = document.querySelector(
+  "input[name='level']:checked"
+).value;
 let defaultLvlSeconds = lvls[defaultLvlName];
+let defaultNumOfWords = parseInt(
+  document.querySelector("input[name='words']:checked").value
+);
+
+let tempWords = words.slice(0, defaultNumOfWords);
 
 // Catch Selectors
 let startBtn = document.querySelector(".game .start");
@@ -53,12 +61,37 @@ let timeLeftSpan = document.querySelector(".game .time span");
 let scoreGot = document.querySelector(".game .stats .got");
 let scoreTotal = document.querySelector(".game .stats .total");
 let finishMessage = document.querySelector(".game .finish");
+let lvlOptions = document.querySelectorAll("input[name='level']");
+let wordsOptions = document.querySelectorAll("input[name='words']");
+
+// change the level
+lvlOptions.forEach((option) => {
+  option.addEventListener("change", function () {
+    let checked = document.querySelector("input[name='level']:checked").value;
+    defaultLvlName = checked;
+    defaultLvlSeconds = lvls[defaultLvlName];
+    levelNameSpan.innerHTML = defaultLvlName;
+    levelsecondsSpan.innerHTML = defaultLvlSeconds;
+    timeLeftSpan.innerHTML = defaultLvlSeconds;
+  });
+});
+
+// change the number of words
+wordsOptions.forEach((option) => {
+  option.addEventListener("change", function () {
+    defaultNumOfWords = parseInt(
+      document.querySelector("input[name='words']:checked").value
+    );
+    scoreTotal.innerHTML = defaultNumOfWords;
+    tempWords = words.slice(0, defaultNumOfWords);
+  });
+});
 
 // setting level name + seconds + score
 levelNameSpan.innerHTML = defaultLvlName;
 levelsecondsSpan.innerHTML = defaultLvlSeconds;
 timeLeftSpan.innerHTML = defaultLvlSeconds;
-scoreTotal.innerHTML = words.length;
+scoreTotal.innerHTML = defaultNumOfWords;
 
 // delete the paste from input
 input.onpaste = function () {
@@ -67,27 +100,31 @@ input.onpaste = function () {
 
 // Start the game
 startBtn.addEventListener("click", (e) => {
-  e.target.remove();
-  input.focus();
-  generateWord();
+  startGame();
 });
+
+function startGame() {
+  startBtn.style.display = "none";
+  document.querySelector(".game .options").style.display = "none";
+  document.querySelector(".game .upcoming-words").style.display = "flex";
+  input.focus();
+  scoreGot.innerHTML = 0;
+  tempWords = words.slice(0, defaultNumOfWords);
+  generateWord();
+}
 
 // function to generate the word
 function generateWord() {
-  let randomWord = words[Math.floor(Math.random() * words.length)];
-  let wordIndex = words.indexOf(randomWord);
-  // delete the word from array
-  words.splice(wordIndex, 1);
-  // show the word
+  let randomWord = tempWords[Math.floor(Math.random() * tempWords.length)];
+  let wordIndex = tempWords.indexOf(randomWord);
+  tempWords.splice(wordIndex, 1);
   theWord.innerHTML = randomWord;
-  // generate and add upcoming-words
   upcomingWords.innerHTML = "";
-  words.forEach((word) => {
+  tempWords.forEach((word) => {
     let li = document.createElement("li");
     li.appendChild(document.createTextNode(word));
     upcomingWords.appendChild(li);
   });
-  // call startPlay function
   startPlay();
 }
 
@@ -98,24 +135,50 @@ function startPlay() {
     timeLeftSpan.innerHTML--;
     if (timeLeftSpan.innerHTML === "0") {
       clearInterval(start);
-      if (input.value.toLowerCase() === theWord.innerHTML.toLocaleLowerCase()) {
+      if (input.value.toLowerCase() === theWord.innerHTML.toLowerCase()) {
         input.value = "";
         scoreGot.innerHTML++;
-        if (words.length > 0) {
+        if (tempWords.length > 0) {
           generateWord();
         } else {
-          upcomingWords.remove();
-          let span = document.createElement("span");
-          span.classList.add("win");
-          span.appendChild(document.createTextNode("Congratulations"));
-          finishMessage.appendChild(span);
+          createFinishBox("win", "Congratulations");
         }
       } else {
-        let span = document.createElement("span");
-        span.classList.add("fail");
-        span.appendChild(document.createTextNode("Game Over"));
-        finishMessage.appendChild(span);
+        createFinishBox("fail", "Game Over");
       }
     }
   }, 1000);
+}
+
+function createFinishBox(className, message) {
+  finishMessage.style.display = "flex";
+  finishMessage.innerHTML = ""; // مسح أي محتوى قديم
+  let span = document.createElement("span");
+  span.classList.add(className);
+  span.appendChild(document.createTextNode(message));
+  finishMessage.appendChild(span);
+
+  // restart button
+  let restartBtn = document.createElement("button");
+  restartBtn.classList.add("restart");
+  restartBtn.appendChild(document.createTextNode("restart"));
+  finishMessage.appendChild(restartBtn);
+
+  restartBtn.addEventListener("click", function () {
+    finishMessage.style.display = "none";
+    input.value = "";
+    theWord.innerHTML = "";
+    upcomingWords.innerHTML = "";
+    startGame();
+  });
+
+  // end button
+  let endBtn = document.createElement("button");
+  endBtn.classList.add("end");
+  endBtn.appendChild(document.createTextNode("end"));
+  finishMessage.appendChild(endBtn);
+
+  endBtn.addEventListener("click", function () {
+    location.reload();
+  });
 }

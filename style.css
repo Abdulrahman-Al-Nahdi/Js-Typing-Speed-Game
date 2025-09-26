@@ -45,6 +45,23 @@ body {
 .game .container .message span::after {
   content: "]";
 }
+.game .container .options {
+  margin: 15px 0;
+  background-color: white;
+  padding: 15px 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+.game .container .options p {
+  font-size: 18px;
+  text-transform: capitalize;
+  margin-bottom: 5px;
+}
+.game .container .options label {
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-right: 10px;
+}
 .game .container .start {
   background-color: var(--secondary-color);
   color: white;
@@ -56,6 +73,10 @@ body {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
+}
+.game .container .start:hover {
+  background-color: #01747e;
 }
 .game .container .the-word {
   font-size: 50px;
@@ -88,6 +109,7 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+  display: none;
 }
 .game .container .upcoming-words li {
   background-color: var(--main-color);
@@ -114,6 +136,37 @@ body {
   color: var(--secondary-color);
   font-weight: bold;
 }
+.game .container .finish {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: white;
+  padding: 15px 0;
+}
+.game .container .finish button {
+  width: 100%;
+  padding: 10px 0;
+  border: none;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  text-transform: capitalize;
+  font-weight: bold;
+}
+.game .container .finish .restart {
+  background-color: var(--secondary-color);
+}
+.game .container .finish .restart:hover {
+  background-color: #01747e;
+}
+.game .container .finish .end {
+  background-color: rgba(161, 0, 0, 0.9);
+}
+.game .container .finish .end:hover {
+  background-color: rgba(161, 0, 0);
+}
 .game .container .finish span {
   font-size: 50px;
   text-transform: capitalize;
@@ -123,5 +176,5 @@ body {
   color: var(--main-color);
 }
 .game .container .finish .fail {
-  color: red;
+  color: rgba(161, 0, 0);
 }
