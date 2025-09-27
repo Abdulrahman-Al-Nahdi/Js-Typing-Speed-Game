@@ -16,12 +16,44 @@ body {
 }
 .game .title {
   background-color: var(--main-color);
-  color: white;
   padding: 30px;
-  text-align: center;
+}
+.game .title .holder {
+  width: 562px;
+  position: relative;
+  margin: 0 auto;
+}
+.game .title span {
   font-size: 40px;
   font-weight: bold;
+  color: lightcyan;
+  position: relative;
+  z-index: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  mix-blend-mode: difference;
 }
+.game .title .holder::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #fff;
+  height: 100%;
+  width: 80px;
+  border-radius: 4px;
+  animation: move 5s linear infinite;
+}
+@keyframes move {
+  0%,
+  100% {
+    left: 0;
+  }
+  50% {
+    left: calc(100% - 80px);
+  }
+}
+/* to here */
 .game .container {
   max-width: 900px;
   margin: 15px auto;
