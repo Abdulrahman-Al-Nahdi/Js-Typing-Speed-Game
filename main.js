@@ -35,20 +35,22 @@ const words = [
 // setting levels of the game
 const lvls = {
   Easy: 5,
-  Normal: 3,
-  Hard: 2,
+  Normal: 4,
+  Hard: 3,
 };
 
-// setting default Level and seconds and num of words
-let defaultLvlName = document.querySelector(
-  "input[name='level']:checked"
-).value;
-let defaultLvlSeconds = lvls[defaultLvlName];
-let defaultNumOfWords = parseInt(
-  document.querySelector("input[name='words']:checked").value
-);
+let savedLevel = localStorage.getItem("lastLevel");
+let savedWords = localStorage.getItem("lastWords");
 
-let tempWords = words.slice(0, defaultNumOfWords);
+// setting default Level and seconds and num of words
+let defaultLvlName =
+  savedLevel || document.querySelector("input[name='level']:checked").value;
+let defaultLvlSeconds = lvls[defaultLvlName];
+let defaultNumOfWords = savedWords
+  ? parseInt(savedWords)
+  : parseInt(document.querySelector("input[name='words']:checked").value);
+
+let tempWords = generateTempArr(defaultNumOfWords);
 
 // Catch Selectors
 let startBtn = document.querySelector(".game .start");
@@ -64,6 +66,24 @@ let finishMessage = document.querySelector(".game .finish");
 let lvlOptions = document.querySelectorAll("input[name='level']");
 let wordsOptions = document.querySelectorAll("input[name='words']");
 
+// تحديث الواجهة عند التحميل
+levelNameSpan.innerHTML = defaultLvlName;
+levelsecondsSpan.innerHTML = defaultLvlSeconds;
+timeLeftSpan.innerHTML = defaultLvlSeconds;
+scoreTotal.innerHTML = defaultNumOfWords;
+
+// ضبط الخيارات المختارة حسب LocalStorage
+if (savedLevel) {
+  document.querySelector(
+    `input[name='level'][value='${savedLevel}']`
+  ).checked = true;
+}
+if (savedWords) {
+  document.querySelector(
+    `input[name='words'][value='${savedWords}']`
+  ).checked = true;
+}
+
 // change the level
 lvlOptions.forEach((option) => {
   option.addEventListener("change", function () {
@@ -73,6 +93,9 @@ lvlOptions.forEach((option) => {
     levelNameSpan.innerHTML = defaultLvlName;
     levelsecondsSpan.innerHTML = defaultLvlSeconds;
     timeLeftSpan.innerHTML = defaultLvlSeconds;
+
+    // حفظ المستوى في LocalStorage
+    localStorage.setItem("lastLevel", defaultLvlName);
   });
 });
 
@@ -83,20 +106,17 @@ wordsOptions.forEach((option) => {
       document.querySelector("input[name='words']:checked").value
     );
     scoreTotal.innerHTML = defaultNumOfWords;
-    tempWords = words.slice(0, defaultNumOfWords);
+    tempWords = generateTempArr(defaultNumOfWords);
+
+    // حفظ عدد الكلمات في LocalStorage
+    localStorage.setItem("lastWords", defaultNumOfWords);
   });
 });
 
-// setting level name + seconds + score
-levelNameSpan.innerHTML = defaultLvlName;
-levelsecondsSpan.innerHTML = defaultLvlSeconds;
-timeLeftSpan.innerHTML = defaultLvlSeconds;
-scoreTotal.innerHTML = defaultNumOfWords;
-
 // delete the paste from input
-input.onpaste = function () {
-  return false;
-};
+input.addEventListener("paste", function (e) {
+  e.preventDefault();
+});
 
 // Start the game
 startBtn.addEventListener("click", (e) => {
@@ -109,7 +129,7 @@ function startGame() {
   document.querySelector(".game .upcoming-words").style.display = "flex";
   input.focus();
   scoreGot.innerHTML = 0;
-  tempWords = words.slice(0, defaultNumOfWords);
+  tempWords = generateTempArr(defaultNumOfWords);
   generateWord();
 }
 
@@ -181,4 +201,15 @@ function createFinishBox(className, message) {
   endBtn.addEventListener("click", function () {
     location.reload();
   });
+}
+function generateTempArr(numOfWords) {
+  let tempArray = [];
+  for (let i = 0; i < numOfWords; ) {
+    let randomWord = words[Math.floor(Math.random() * words.length)];
+    if (!tempArray.includes(randomWord)) {
+      tempArray.push(randomWord);
+      i++;
+    }
+  }
+  return tempArray;
 }
