@@ -26,7 +26,7 @@ body {
 .game .title span {
   font-size: 40px;
   font-weight: bold;
-  color: rgb(215, 249, 249);
+  color: #b7eee9;
   position: relative;
   z-index: 1;
   text-transform: uppercase;
